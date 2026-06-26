@@ -1,0 +1,59 @@
+###############################################################################
+# NEVER commit terraform.tfvars to git — add it to .gitignore
+###############################################################################
+
+# All VLANS and IPS listed in this file are for reference only. Update them to match your own VLANs and IP addressing scheme. 
+#The Terraform code will not create VLANs or configure your network, it will only assign the IP addresses you provide to the VMs.
+
+proxmox_endpoint  = "https://10.0.0.1:8006/" # IP address of your Proxmox host (or cluster VIP) with port 8006
+proxmox_api_token = "user@auth!tokenname=tokenvalue" # Proxmox API token with sufficient privileges to create VMs, storage, etc.
+
+# Generate with: cat ~/.ssh/id_ed25519.pub
+ssh_public_key = "ssh-ed25519 content_of_your_public_key_here user@host" #public key for the default user to be added to all VMs
+
+# Proxmox Nodes
+node_primary   = "hostname01" # hostname of your primary Proxmox node
+node_secondary = "hostname02"  # hostname of your secondary Proxmox node
+node_lab       = "hostnamelab" # hostname of your lab Proxmox node
+
+# Storage IDs — match what you configured in Proxmox
+storage_local_primary   = "NVMe_hostname01" # ID of the local NVMe storage on the primary Proxmox node
+storage_local_secondary   = "NVMe_hostname02" # ID of the local NVMe storage on the secondary Proxmox node
+storage_local_lab = "local-zfs" # ID of the local ZFS storage on the lab Proxmox node
+storage_iscsi_primary   = "hostname01_iscsi" # ID of the iSCSI storage on the primary Proxmox node
+storage_iscsi_secondary   = "hostname02_iscsi" # ID of the iSCSI storage on the secondary Proxmox node
+
+# VM template IDs — one per node (Proxmox VM IDs are cluster-wide unique)
+vm_template_id             = 9000   # lives on hostname01 / NVMe_hostname01
+vm_template_id_secondary   = 9001   # lives on hostname02 / NVMe_hostname02
+vm_template_id_ubuntu      = 9002   # lives on hostname01 / NVMe_hostname01
+vm_template_id_ubuntu02    = 9003   # lives on hostname02 / NVMe_hostname02
+
+# Default user for cloud-init
+default_user = "username" # default user to be created on all VMs via cloud-init
+
+# Networking
+domain_name           = "domain.local" # domain name for your lab
+vm_ip_monitoring      = "10.0.20.xx /24" # Ideally IP addresses should contain the VLAN ID as the third octet, e.g. 10.0.20.xx for VLAN 20 - VM traffic
+vm_ip_wazuh_indexer   = "10.0.60.xx/24" # VLAN 60 - Security traffic.
+vm_ip_wazuh_server    = "10.0.60.xx/24"
+vm_ip_wazuh_dashboard = "10.0.60.xx/24"
+vm_ip_openvas         = "10.0.60.xx/24"
+vm_ip_gitea           = "10.0.20.xx/24"
+vm_ip_woodpecker      = "10.0.20.xx/24"
+vm_ip_harbor          = "10.0.20.xx/24"
+vm_ip_vault           = "10.0.20.xx/24"
+vm_ip_k3s_control     = "10.0.20.xx/24"
+vm_ip_k3s_worker1     = "10.0.20.xx/24"
+vm_ip_k3s_worker2     = "10.0.20.xx/24"
+
+vlan_mgmt = x0  #VLAN ID for management network
+vlan_storage = x0  #VLAN ID for storage network
+vlan_vm = 20  #VLAN ID for VM network
+vlan_security = 60  #VLAN ID for security network
+gateway_mgmt = "10.0.x0.1" # Gateway for management network (as set in the Firewall/router)
+gateway_vm = "10.0.20.1" # Gateway for VM network (as set in the Firewall/router)
+gateway_security = "10.0.60.1" # Gateway for security network (as set in the Firewall/router)
+dns_server = "10.0.10.1" # DNS server for all networks (as set in the Firewall/router)
+bridge30 = "vmbr20" # Bridge interface in Proxmox for VLAN 20 (VM traffic)
+bridge40 = "vmbr60" # Bridge interface in Proxmox for VLAN 60 (Security traffic)
